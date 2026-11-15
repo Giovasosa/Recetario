@@ -1,13 +1,22 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>categorias</ion-title>
+    <ion-title>Categorías</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">categorias</ion-title>
+      <ion-title size="large">Categorías</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-list *ngIf="categorias$ | async as categorias">
+    <!-- button="true" hace que el item se vea clickeable -->
+    <ion-item *ngFor="let cat of categorias" button="true" (click)="verRecetas(cat.nombre)">
+      <ion-icon name="restaurant-outline" slot="start"></ion-icon>
+      <ion-label>{{ cat.nombre }}</ion-label>
+      <ion-badge slot="end">{{ cat.cantidad }}</ion-badge>
+    </ion-item>
+  </ion-list>
 </ion-content>
