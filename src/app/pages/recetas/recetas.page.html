@@ -11,6 +11,13 @@
     </ion-toolbar>
   </ion-header>
 
+  <!-- aparece solo si venimos de Categorías con un filtro puesto -->
+  <ion-chip *ngIf="categoriaActiva" color="primary" (click)="limpiarFiltro()">
+    <ion-label>{{ categoriaActiva }}</ion-label>
+    <ion-icon name="close-circle"></ion-icon>
+  </ion-chip>
+
+  <!-- async = se suscribe solo y se desuscribe solo, no hace falta hacerlo a mano -->
   <ion-list *ngIf="recetas$ | async as recetas">
     <ion-card *ngFor="let receta of recetas">
       <img [src]="receta.imagenUrl" [alt]="receta.nombre" />
@@ -24,6 +31,7 @@
           <span><ion-icon name="time-outline"></ion-icon> {{ receta.tiempoPreparacionMin }} min</span>
           <span><ion-icon name="people-outline"></ion-icon> {{ receta.porciones }} porciones</span>
           <ion-button fill="clear" (click)="toggleFavorito(receta)">
+            <!-- cambia de ícono según esté marcada como favorita o no -->
             <ion-icon
               slot="icon-only"
               [name]="receta.favorito ? 'heart' : 'heart-outline'"
