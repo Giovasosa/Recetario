@@ -1,13 +1,39 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>favoritos</ion-title>
+    <ion-title>Favoritos</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">favoritos</ion-title>
+      <ion-title size="large">Favoritos</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-list *ngIf="favoritos$ | async as favoritos">
+    <!-- si no hay favoritos, muestro un mensaje en vez de la lista vacía -->
+    <div class="sin-favoritos" *ngIf="favoritos.length === 0">
+      <ion-icon name="heart-outline"></ion-icon>
+      <p>Todavía no marcaste ninguna receta como favorita.</p>
+    </div>
+
+    <ion-card *ngFor="let receta of favoritos">
+      <img [src]="receta.imagenUrl" [alt]="receta.nombre" />
+      <ion-card-header>
+        <ion-card-subtitle>{{ receta.categoria }}</ion-card-subtitle>
+        <ion-card-title>{{ receta.nombre }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ receta.descripcion }}</p>
+        <div class="receta-meta">
+          <span><ion-icon name="time-outline"></ion-icon> {{ receta.tiempoPreparacionMin }} min</span>
+          <span><ion-icon name="people-outline"></ion-icon> {{ receta.porciones }} porciones</span>
+          <ion-button fill="clear" (click)="toggleFavorito(receta)">
+            <ion-icon slot="icon-only" name="heart" color="danger"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>
