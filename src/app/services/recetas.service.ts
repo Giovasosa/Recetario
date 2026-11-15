@@ -102,6 +102,11 @@ export class RecetasService {
     );
   }
 
+  getFavoritos(): Observable<Receta[]> {
+    // mismo truco de siempre: filtro, y como viene de recetas$ se actualiza solo
+    return this.recetas$.pipe(map((recetas) => recetas.filter((r) => r.favorito)));
+  }
+
   toggleFavorito(id: number): void {
     // hago una copia del array (no lo toco directo), si no Angular no se entera del cambio
     const actualizadas = this.recetas$.value.map((r) =>
