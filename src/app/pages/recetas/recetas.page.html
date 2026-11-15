@@ -1,13 +1,37 @@
 <ion-header [translucent]="true">
   <ion-toolbar>
-    <ion-title>recetas</ion-title>
+    <ion-title>Recetas</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-header collapse="condense">
     <ion-toolbar>
-      <ion-title size="large">recetas</ion-title>
+      <ion-title size="large">Recetas</ion-title>
     </ion-toolbar>
   </ion-header>
+
+  <ion-list *ngIf="recetas$ | async as recetas">
+    <ion-card *ngFor="let receta of recetas">
+      <img [src]="receta.imagenUrl" [alt]="receta.nombre" />
+      <ion-card-header>
+        <ion-card-subtitle>{{ receta.categoria }}</ion-card-subtitle>
+        <ion-card-title>{{ receta.nombre }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>{{ receta.descripcion }}</p>
+        <div class="receta-meta">
+          <span><ion-icon name="time-outline"></ion-icon> {{ receta.tiempoPreparacionMin }} min</span>
+          <span><ion-icon name="people-outline"></ion-icon> {{ receta.porciones }} porciones</span>
+          <ion-button fill="clear" (click)="toggleFavorito(receta)">
+            <ion-icon
+              slot="icon-only"
+              [name]="receta.favorito ? 'heart' : 'heart-outline'"
+              [color]="receta.favorito ? 'danger' : 'medium'"
+            ></ion-icon>
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </ion-list>
 </ion-content>
