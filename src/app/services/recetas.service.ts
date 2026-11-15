@@ -1,6 +1,12 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { Receta } from '../models/receta.model';
+
+export interface CategoriaResumen {
+  nombre: string;
+  cantidad: number;
+}
 
 const RECETAS_MOCK: Receta[] = [
   {
@@ -65,20 +71,39 @@ const RECETAS_MOCK: Receta[] = [
   },
 ];
 
+// 'root' = un solo service para toda la app, Angular lo crea una vez y lo reparte
 @Injectable({ providedIn: 'root' })
 export class RecetasService {
+  // guarda las recetas actuales y avisa a todos cuando cambian
   private recetas$ = new BehaviorSubject<Receta[]>(RECETAS_MOCK);
 
   getRecetas(): Observable<Receta[]> {
+    // asObservable() = lo dejo solo para que lo lean, no para que lo modifiquen
     return this.recetas$.asObservable();
   }
 
-  getCategorias(): string[] {
-    const categorias = this.recetas$.value.map((r) => r.categoria);
-    return [...new Set(categorias)];
+  getCategoriasConCantidad(): Observable<CategoriaResumen[]> {
+    // pipe + map: cada vez que cambian las recetas, recalculo el resumen solo
+    return this.recetas$.pipe(
+      map((recetas) => {
+        const categorias = recetas.map((r) => r.categoria);
+        const nombresUnicos = [...new Set(categorias)]; // sin repetidos
+        return nombresUnicos.map((nombre) => ({
+          nombre,
+          cantidad: recetas.filter((r) => r.categoria === nombre).length,
+        }));
+      })
+    );
+  }
+
+  getRecetasPorCategoria(categoria: string): Observable<Receta[]> {
+    return this.recetas$.pipe(
+      map((recetas) => recetas.filter((r) => r.categoria === categoria))
+    );
   }
 
   toggleFavorito(id: number): void {
+    // hago una copia del array (no lo toco directo), si no Angular no se entera del cambio
     const actualizadas = this.recetas$.value.map((r) =>
       r.id === id ? { ...r, favorito: !r.favorito } : r
     );
